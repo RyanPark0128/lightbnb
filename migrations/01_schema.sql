@@ -1,9 +1,9 @@
-DROP TABLE IF EXISTS guests;
-DROP TABLE IF EXISTS properties;
-DROP TABLE IF EXISTS reservations;
-DROP TABLE IF EXISTS property_reviews;
+DROP TABLE IF EXISTS property_reviews CASCADE;
+DROP TABLE IF EXISTS reservations CASCADE;
+DROP TABLE IF EXISTS properties CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
 
-CREATE TABLE guests (
+CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255),
     email VARCHAR(255),
@@ -11,8 +11,8 @@ CREATE TABLE guests (
 );
 
 CREATE TABLE properties (
-    id SERIAL PRIMARY KEY,
-    guest_id INTEGER NOT NULL REFERENCES guests(id) ON DELETE CASCADE,
+    property_id SERIAL PRIMARY KEY,
+    owner_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     title VARCHAR(255),
     description TEXT,
     thumbnail_photo_url TEXT,
@@ -31,17 +31,17 @@ CREATE TABLE properties (
 
 CREATE TABLE reservations (
     id SERIAL PRIMARY KEY,
-    property_id INTEGER NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
-    guest_id INTEGER NOT NULL REFERENCES guests(id) ON DELETE CASCADE,
+    property_id INTEGER NOT NULL REFERENCES properties(property_id) ON DELETE CASCADE,
+    guest_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     start_date DATE,
     end_date DATE
 );
 
 CREATE TABLE property_reviews (
-    id SERIAL PRIMARY KEY,
-    guest_id INTEGER NOT NULL REFERENCES guests(id) ON DELETE CASCADE,
+    property_review_id SERIAL PRIMARY KEY,
+    guest_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     reservation_id INTEGER NOT NULL REFERENCES reservations(id) ON DELETE CASCADE,
-    property_id INTEGER NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+    property_id INTEGER NOT NULL REFERENCES properties(property_id) ON DELETE CASCADE,
     rating INTEGER,
     message TEXT
 );
